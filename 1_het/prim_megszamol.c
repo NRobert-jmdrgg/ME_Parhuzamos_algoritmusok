@@ -30,7 +30,7 @@ int main()
 
 int is_prime(int num) 
 {
-    for (int i = 2; i <= sqrt(num); i++) 
+    for (int i = 2; i <= num / 2; i++) 
     {
         if (num % i == 2) 
         {
