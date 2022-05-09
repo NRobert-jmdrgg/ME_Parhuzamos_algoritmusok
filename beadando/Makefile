@@ -1,12 +1,16 @@
+CC = gcc
 
-single:
-	gcc -Wall -Wextra -pedantic -Wfatal-errors ./src/wordcount_singlethreaded.c -lpthread -lm -o ./bin/wordcount_singlethreaded && ./bin/wordcount_singlethreaded test.txt lorem
+FILES = ./src/dir_cleaner.c
 
-multi:
-	gcc -Wall -Wextra -pedantic -Wfatal-errors ./src/wordcount_multithreaded.c -lpthread -lm -o ./bin/wordcount_multithreaded && ./bin/wordcount_multithreaded test.txt lorem
+OUT = ./bin/dir_cleaner
 
-run_single:
-	./bin/wordcount_singlethreaded test.txt lorem
+INCLUDE =  -lpthread -lm -fopenmp
 
-run_multi:
-	./bin/wordcount_multithreaded test.txt lorem
+FLAGS = -Wall -Wextra -pedantic -Wfatal-errors
+
+ARGS = test.txt lorem
+
+all:
+	$(CC) $(FLAGS) $(FILES) $(INCLUDE) -o $(OUT) && $(OUT) 
+	
+	
