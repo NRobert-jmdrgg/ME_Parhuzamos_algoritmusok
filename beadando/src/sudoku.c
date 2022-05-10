@@ -56,6 +56,8 @@ int solve(int sudoku[9][9], int level) {
     int row = 0;
     int col = 0;
 
+    printf("Level: %d\n", level);
+
     if (!find_unassigned(sudoku, &row, &col)) return 1;
 
     for (int num = 1; num <= 9; num++) {
@@ -82,6 +84,7 @@ int solve(int sudoku[9][9], int level) {
 }
 
 int main() {
+    start = omp_get_wtime();
     omp_set_nested(true);
     // formatter miatt
     int sudoku[9][9] = {{5, 3, 0, 0, 7, 0, 0, 0, 0}, {6, 0, 0, 1, 9, 5, 0, 0, 0},

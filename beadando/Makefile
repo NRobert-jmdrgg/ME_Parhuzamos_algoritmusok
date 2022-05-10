@@ -1,8 +1,8 @@
 CC = gcc
 
-FILES = ./src/KMP_multi.c
+FILES = ./src/sudoku.c
 
-OUT = ./bin/KMP_multi
+OUT = ./bin/sudoku
 
 INCLUDE =  -lpthread -lm -fopenmp
 
