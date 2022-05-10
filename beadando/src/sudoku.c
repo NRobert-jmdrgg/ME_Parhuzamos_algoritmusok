@@ -56,14 +56,11 @@ int solve(int sudoku[9][9], int level) {
     int row = 0;
     int col = 0;
 
-    printf("Level: %d\n", level);
-
     if (!find_unassigned(sudoku, &row, &col)) return 1;
 
     for (int num = 1; num <= 9; num++) {
         if (is_safe(sudoku, row, col, num)) {
-#pragma omp task default(none) firstprivate(sudoku, row, col, num, level) shared(start) \
-    final(level > 1)
+#pragma omp task default(none) firstprivate(sudoku, row, col, num, level) shared(start)
             {
                 int copy[9][9];
                 memcpy(copy, sudoku, 9 * 9 * sizeof(int));
@@ -84,17 +81,40 @@ int solve(int sudoku[9][9], int level) {
 }
 
 int main() {
-    start = omp_get_wtime();
     omp_set_nested(true);
-    // formatter miatt
-    int sudoku[9][9] = {{5, 3, 0, 0, 7, 0, 0, 0, 0}, {6, 0, 0, 1, 9, 5, 0, 0, 0},
-                        {0, 9, 8, 0, 0, 0, 0, 6, 0}, {8, 0, 0, 0, 6, 0, 0, 0, 3},
-                        {4, 0, 0, 8, 0, 3, 0, 0, 1}, {0, 6, 0, 0, 0, 0, 2, 8, 0},
-                        {0, 0, 0, 4, 1, 9, 0, 0, 5}, {0, 0, 0, 0, 8, 0, 0, 7, 9}};
+    int **sudoku;
 
+    int easy_s[9][9] = {
+        {9, 0, 2, 4, 1, 5, 0, 0, 0}, {0, 0, 5, 0, 6, 0, 0, 0, 0}, {3, 7, 0, 0, 0, 0, 0, 6, 1},
+        {2, 1, 0, 3, 9, 6, 0, 0, 5}, {4, 0, 6, 0, 0, 0, 0, 0, 2}, {0, 0, 3, 0, 8, 0, 1, 9, 0},
+        {6, 4, 9, 0, 3, 1, 0, 5, 7}, {5, 0, 0, 6, 0, 0, 0, 0, 4}, {8, 0, 7, 5, 0, 9, 0, 0, 0}};
+
+    int medium_s[9][9] = {
+        {0, 6, 0, 0, 7, 0, 4, 1, 0}, {0, 0, 0, 0, 2, 9, 7, 0, 0}, {0, 7, 4, 0, 6, 0, 9, 0, 8},
+        {0, 0, 0, 0, 0, 0, 2, 0, 4}, {0, 0, 0, 0, 0, 2, 0, 5, 0}, {0, 1, 8, 7, 0, 0, 0, 0, 0},
+        {5, 3, 1, 9, 0, 0, 0, 0, 2}, {0, 0, 0, 0, 0, 0, 5, 0, 0}, {0, 4, 0, 0, 5, 7, 0, 3, 1}};
+
+    int hard_s[9][9] = {
+        {0, 6, 5, 0, 0, 0, 0, 1, 9}, {0, 0, 3, 0, 0, 0, 0, 0, 6}, {0, 0, 0, 0, 0, 3, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 4, 0}, {1, 0, 0, 0, 3, 0, 0, 0, 7}, {0, 7, 0, 5, 2, 6, 0, 0, 0},
+        {0, 8, 0, 0, 0, 0, 9, 7, 0}, {0, 3, 0, 0, 5, 0, 2, 0, 0}, {9, 1, 0, 6, 0, 4, 0, 0, 0}};
+
+    int expert_s[9][9] = {
+        {0, 0, 0, 0, 0, 0, 8, 0, 0}, {2, 1, 0, 3, 0, 0, 0, 0, 0}, {7, 0, 3, 2, 4, 0, 0, 0, 0},
+        {0, 6, 0, 4, 5, 0, 0, 0, 8}, {0, 8, 5, 0, 0, 6, 0, 0, 9}, {0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 2, 0, 0, 0, 4}, {6, 0, 0, 0, 0, 3, 0, 5, 0}, {0, 0, 0, 0, 0, 0, 6, 1, 0}};
+
+    int evil_s[9][9] = {
+        {3, 0, 0, 0, 0, 0, 0, 0, 5}, {0, 2, 5, 0, 0, 8, 0, 1, 0}, {6, 0, 0, 0, 2, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 4, 0, 0}, {2, 0, 0, 0, 0, 0, 0, 0, 0}, {0, 7, 9, 0, 8, 0, 0, 0, 6},
+        {0, 0, 0, 9, 0, 0, 0, 6, 0}, {0, 0, 3, 0, 0, 0, 0, 0, 0}, {0, 5, 8, 0, 7, 0, 0, 0, 9}};
+
+    sudoku = easy_s;
+
+    start = omp_get_wtime();
 #pragma omp parallel default(none) shared(sudoku) num_threads(4)
-#pragma omp single nowait
-    printf("%d\n", solve(sudoku, 1));
+#pragma omp master
+    solve(sudoku, 1);
 
     return 0;
 }

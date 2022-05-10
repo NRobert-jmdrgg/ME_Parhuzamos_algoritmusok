@@ -169,6 +169,7 @@ async def main():
     consumers = []
     for _ in range(4):
         consumers.append(asyncio.ensure_future(grayscale_image(queue)))
+    # start
     await asyncio.gather(*producers,  return_exceptions=True)
     await queue.join()
     for consumer in consumers:

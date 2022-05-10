@@ -1,8 +1,8 @@
 CC = gcc
 
-FILES = ./src/sudoku.c
+FILES = ./src/wordcount_multithreaded.c
 
-OUT = ./bin/sudoku
+OUT = ./bin/wordcount_multithreaded
 
 INCLUDE =  -lpthread -lm -fopenmp
 
